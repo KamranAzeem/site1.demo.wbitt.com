@@ -1,0 +1,26 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: google/cloud-sdk
+    steps: 
+      - run: 
+          name: authenticate with gcloud
+          command: |
+            echo $GCLOUD_CREDENTIALS > ${HOME}/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+      - checkout             
+      - setup_remote_docker
+      - run: |
+          gcloud auth configure-docker --quiet     
+          docker build -t eu.gcr.io/ingress-demo-267001/site1:${CIRCLE_SHA1}
+          docker push eu.gcr.io/ingress-demo-267001/site1:${CIRCLE_SHA1}
+
+workflows:
+  version: 2
+  build:
+    jobs: 
+      - build:
+          filters:
+            branches: 
+              only: master
