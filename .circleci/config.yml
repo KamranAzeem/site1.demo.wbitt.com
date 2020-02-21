@@ -29,7 +29,9 @@ jobs:
       - checkout             
       - run: |
           SHORT_HASH=$(echo $CIRCLE_SHA1 | cut -c -7)      
+          echo $SHORT_HASH
           sed  s/SHORT_HASH/$SHORT_HASH/ deployment.yaml.template > deployment.yaml
+          kubectl create  configmap configmap-site1-conf --from-file=site1.conf
           kubectl apply -f deployment.yaml 
 
 workflows:

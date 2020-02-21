@@ -14,9 +14,16 @@ spec:
       labels:
         app: site1
     spec:
+      volumes:
+      - name: vol-site1-conf
+        configMap:
+          name: configmap-site1-conf
       containers:
       - name: site1
         image: eu.gcr.io/ingress-demo-267001/site1:SHORT_HASH
         ports:
         - containerPort: 80
+        volumeMounts:
+        - mountPath: "/config/"
+          name: vol-site1-conf
 
