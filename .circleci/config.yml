@@ -12,9 +12,10 @@ jobs:
       - checkout             
       - setup_remote_docker
       - run: |
-          gcloud auth configure-docker --quiet     
-          docker build -t eu.gcr.io/ingress-demo-267001/site1:${CIRCLE_SHA1} .
-          docker push eu.gcr.io/ingress-demo-267001/site1:${CIRCLE_SHA1}
+          gcloud auth configure-docker --quiet
+          SHORT_HASH=$(echo $CIRCLE_SHA | cut -c -7)      
+          docker build -t eu.gcr.io/ingress-demo-267001/site1:${SHORT_HASH} .
+          docker push eu.gcr.io/ingress-demo-267001/site1:${SHORT_HASH}
   deploy:
     docker:
       - image: google/cloud-sdk  
@@ -27,6 +28,8 @@ jobs:
             gcloud container clusters get-credentials standard-cluster-1 --zone us-central1-a --project ingress-demo-267001
       - checkout             
       - run: |
+          SHORT_HASH=$(echo $CIRCLE_SHA | cut -c -7)      
+          sed  s/SHORT_HASH/$SHORT_HASH/ deployment.yaml.template > deployment.yaml
           kubectl apply -f deployment.yaml 
 
 workflows:
