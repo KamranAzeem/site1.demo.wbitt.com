@@ -15,12 +15,31 @@ jobs:
           gcloud auth configure-docker --quiet     
           docker build -t eu.gcr.io/ingress-demo-267001/site1:${CIRCLE_SHA1} .
           docker push eu.gcr.io/ingress-demo-267001/site1:${CIRCLE_SHA1}
+  deploy:
+    docker:
+      - image: google/cloud-sdk  
+    steps: 
+      - run: 
+          name: authenticate with gcloud
+          command: |
+            echo $GCLOUD_CREDENTIALS > ${HOME}/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            gcloud container clusters get-credentials standard-cluster-1 --zone us-central1-a --project ingress-demo-267001
+      - checkout             
+      - run: |
+          kubectl apply -f deployment.yaml 
 
 workflows:
   version: 2
-  build:
+  build-and-deploy:
     jobs: 
       - build:
+          filters:
+            branches: 
+              only: master
+      - deploy:
+          requires:
+            - build
           filters:
             branches: 
               only: master

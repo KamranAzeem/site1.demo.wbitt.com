@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: site1-deployment
+  labels:
+    app: site1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: site1
+  template:
+    metadata:
+      labels:
+        app: site1
+    spec:
+      containers:
+      - name: site1
+        image: eu.gcr.io/ingress-demo-267001/site1:f02aebf76c99309590d61dd0bdb7245bb0a9bee6
+        ports:
+        - containerPort: 80
+
