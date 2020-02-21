@@ -13,7 +13,7 @@ jobs:
       - setup_remote_docker
       - run: |
           gcloud auth configure-docker --quiet     
-          docker build -t eu.gcr.io/ingress-demo-267001/site1:${CIRCLE_SHA1}
+          docker build -t eu.gcr.io/ingress-demo-267001/site1:${CIRCLE_SHA1} .
           docker push eu.gcr.io/ingress-demo-267001/site1:${CIRCLE_SHA1}
 
 workflows:
